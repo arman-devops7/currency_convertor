@@ -1,17 +1,25 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 
-// custom hook
+// Custom hook
 const useCurrencyInfo = (currency) => {
-  const [data, setData] = useState({})
+  const [data, setData] = useState({});
   const url = `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${currency}.json`;
+
   useEffect(() => {
-    fetch(url)
-      .then((res) => res.json())
-      .then((res) => setData(res[currency]))
-      .catch((err) => err)
-  }, [currency]) // agar currncy m chng ho toh call krvao
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(url);
+        setData(response.data[currency]);
+      } catch (error) {
+        console.error("Error fetching currency data:", error);
+      }
+    };
 
-  return data
-}
+    fetchData();
+  }, [currency]); // Re-fetch when `currency` changes
 
-export default useCurrencyInfo
+  return data;
+};
+
+export default useCurrencyInfo;
